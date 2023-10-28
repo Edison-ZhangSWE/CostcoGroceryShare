@@ -3,7 +3,7 @@
   "name": "Costco Grocery Share",
   "version": "1.0",
   "description": "Share and split bulk grocery orders from Costco.",
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "storage"], 
   "background": {
     "service_worker": "background.js"
   },
@@ -15,6 +15,12 @@
       "128": "icons/icon128.png"
     }
   },
+  "content_scripts": [  
+    {
+      "matches": ["*://www.costco.com/*"],
+      "js": ["content.js"]
+    }
+  ],
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
