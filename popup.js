@@ -88,6 +88,12 @@ function populateDropdown(remainingQuantity, userSelectedQuantity) {
   let dropdown = document.getElementById("quantityDropdown");
   dropdown.innerHTML = '';
 
+  // Add a default option of "0"
+  let defaultOption = document.createElement("option");
+  defaultOption.value = 0;
+  defaultOption.innerText = "0";
+  dropdown.appendChild(defaultOption);
+
   let maxOptionValue = remainingQuantity + userSelectedQuantity;
   for (let i = 1; i <= maxOptionValue; i++) {
     let option = document.createElement("option");
@@ -99,11 +105,10 @@ function populateDropdown(remainingQuantity, userSelectedQuantity) {
     }
 
     dropdown.appendChild(option);
-    if (userSelectedQuantity > 0) {
-      dropdown.value = userSelectedQuantity;
-    }
   }
+  dropdown.value = userSelectedQuantity;
 }
+
 
 let currentOrders = 5;
 let totalOrders = 14;
