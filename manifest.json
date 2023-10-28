@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Costco Grocery Share",
-  "version": "1.0",
+  "version": "1.01",
   "description": "Share and split bulk grocery orders from Costco.",
   "permissions": [
     "activeTab",
     "storage",
+    "scripting",
     "notifications"
-],
+  ],
   "background": {
       "service_worker": "background.js"
   },

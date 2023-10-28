@@ -36,3 +36,50 @@ button:hover {
     margin-top: 5px;
 }
 
+#productDetails {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#quantityDropdown {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* New styles for dropdown options */
+#quantityDropdown option.user-added {
+    background-color: #ffeee6;
+}
+
+#queueProgressContainer {
+    position: relative;
+    height: 20px;
+    width: 100%;
+    background-color: #ddd;
+    margin-bottom: 10px;
+}
+
+.progress-segment {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: width 0.3s;
+}
+
+#existingOrders {
+    left: 0;
+    background-color: blue;
+}
+
+#userOrders {
+    background-color: orange;
+}
+
+#queueProgressLabel {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    padding: 0 5px;
+}

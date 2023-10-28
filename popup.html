@@ -6,12 +6,20 @@
   </head>
   <body>
     <h2>Costco Grocery Share</h2>
-    
+
     <div id="queueProgressContainer">
-      <progress id="queueProgress" value="0" max="14"></progress>
+      <div id="existingOrders" class="progress-segment"></div>
+      <div id="userOrders" class="progress-segment"></div>
       <div id="queueProgressLabel">0/14</div>
-  </div>
-    <button id="addToQueue">Add to Queue</button>
+    </div>
+
+
+
+    <div id="productDetails"></div>
+    <select id="quantityDropdown">
+      <!-- Options will be added dynamically based on the product -->
+    </select>
+    <button id="confirmOrderButton">Confirm</button>
     <script src="popup.js"></script>
   </body>
 </html>
