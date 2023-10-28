@@ -6,9 +6,11 @@
   </head>
   <body>
     <h2>Costco Grocery Share</h2>
-    <div id="queueStatus">
-      <!-- Dynamically populated queue status will go here -->
-    </div>
+    
+    <div id="queueProgressContainer">
+      <progress id="queueProgress" value="0" max="14"></progress>
+      <div id="queueProgressLabel">0/14</div>
+  </div>
     <button id="addToQueue">Add to Queue</button>
     <script src="popup.js"></script>
   </body>

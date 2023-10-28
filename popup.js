@@ -19,6 +19,24 @@ function addItemToQueue(item, imageUrl) {
   document.getElementById("queueStatus").appendChild(itemElement);
 }
 
+
+function updateQueueProgress(currentOrders, totalOrders) {
+  let progress = document.getElementById("queueProgress");
+  let label = document.getElementById("queueProgressLabel");
+
+  progress.value = currentOrders;
+  progress.max = totalOrders;
+
+  label.innerText = `${currentOrders}/${totalOrders}`;
+}
+
+// Placeholder for now; replace this with a call to your backend.
+let currentOrders = 5;
+let totalOrders = 14;  // You'd need to fetch this based on the product page the user is on.
+
+updateQueueProgress(currentOrders, totalOrders);
+
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "addItem") {
     addItemToQueue(request.imageUrl);
