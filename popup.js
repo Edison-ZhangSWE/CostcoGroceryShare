@@ -338,10 +338,16 @@ document.getElementById('confirmOrderButton').addEventListener('click', function
     return;
   }
   let selectedQuantity = parseInt(document.getElementById('quantityDropdown').value);
+
+  // Validate the order count before updating
+  if (currentOrders + selectedQuantity > totalOrders) {
+    console.error("Order quantity exceeds the total limit.");
+    // Handle the error, e.g., by showing a message to the user
+    return;
+  }
+
   currentOrders += selectedQuantity;
-  updateQueueProgress(currentOrders, totalOrders);
-  let remainingQuantity = totalOrders - currentOrders;
-  populateDropdown(remainingQuantity, 0);
+
   let productName = document.getElementById("productDetails").innerText;
 
   fetch('http://34.28.211.41:8000/orders/', { // Note the trailing slash
@@ -358,11 +364,15 @@ document.getElementById('confirmOrderButton').addEventListener('click', function
       .then(response => response.json())
       .then(data => {
         console.log('Order stored:', data);
+        updateQueueProgress(currentOrders, 0); // You should update the progress bar after order storage confirmation
+        let remainingQuantity = totalOrders - currentOrders;
+        populateDropdown(remainingQuantity, 0); // Repopulate the dropdown after updating the progress bar
       })
       .catch((error) => {
         console.error("Error:", error);
       });
 });
+
 
 document
     .getElementById("quantityDropdown")
