@@ -1,50 +1,100 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Costco Grocery Share</title>
-  <link rel="stylesheet" type="text/css" href="popup.css" />
-</head>
-<body>
-<h2>Costco Grocery Share</h2>
+  <head>
+    <title>Costco Grocery Share</title>
+    <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="popup.css" />
 
-<!-- Login Section -->
-<div id="loginSection">
-  <input type="email" id="email" placeholder="Email" />
-  <select id="campus">
-    <option value="UC Berkeley">UC Berkeley</option>
-    <option value="UC Merced">UC Merced</option>
-    <option value="UC Davis">UC Davis</option>
-  </select>
-  <button id="loginButton">Login</button>
-  <div id="loginError" style="color: red"></div>
-  <!-- Display login errors here -->
-</div>
+  </head>
+  <body>
+    <!-- Login Section -->
+    <div id="loginSection">
+      <h2 class="block text-3xl font-medium leading-6 text-gray-900">Herd</h2>
+      <h3 class="block text-xl font-medium leading-6 text-gray-900">Save money by herding together.</h3>
+      <div>
+        <label for="Email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
+        <div class="mt-2">
+          <input
+            for="email"
+            name="email"
+            id="email"
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            placeholder="Log in with your e-mail"
+            ></input>
+      </div>
+      </div>
+    <div>
+      <label for="University" class="block text-sm font-medium leading-6 text-gray-900">University</label>
+      <select id="campus" class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        <option value="" disabled selected>Select your campus</option>
+        <option value="UC Berkeley">UC Berkeley</option>
+        <option value="UC Davis">UC Davis</option>
+        <option value="UC Irvine">UC Irvine</option>
+        <option value="UC Santa Cruz">UC Santa Cruz</option>
+        <option value="UC Santa Barbara">UC Santa Barbara</option>
+        <option value="UCLA">UCLA</option>
+        <option value="UC Merced">UC Merced</option>
+        <option value="UC Riverside">UC Riverside</option>
+        <option value="UC San Diego">UC San Diego</option>
+      </select>
+    </div>
+      <button
+        id="loginButton"
+        type="button"
+        class="buttonAccept"
+      >
+        Login
+      </button>
+      <div id="loginError" style="color: red"></div>
+    </div>
 
-<!-- Main content (hidden by default) -->
-<div id="mainContent" style="display: none">
-  <div id="userInfo">
-    <p>Logged in as: <span id="loggedInEmail"></span></p>
-    <p>University: <span id="loggedInUniversity"></span></p>
-    <button id="logoutButton">Logout</button>
-  </div>
+    <!-- Main content (hidden by default) -->
+    <div class="bodyWrap">
+      <div id="mainContent" style="display: none">
+        <div class="container">
+          <div class="leftBox">
+            <div class="contentBox">
+              <h1>Herd</h1>
+              <h2>Save money by herding together.</h2>
+            </div>
+          </div>
+          <div class="rightBox">
+            <div id="userInfo">
+              <p><span id="loggedInEmail"></span></p>
+              <p><span id="loggedInUniversity"></span></p>
+            </div>
+            <button id="logoutButton">Logout</button>
+          </div>
+        </div>
+        <div id="queueProgressContainer">
+          <div id="existingOrders" class="progress-segment"></div>
+          <div id="userOrders" class="progress-segment"></div>
+          <div id="queueProgressLabel"></div>
+        </div>
+        <div class="contentBox">
+          <h2>Item</h2>
+          <div id="productDetails"></div>
+        </div>
+        <div class="contentBox">
+          <h2>Quantity</h2>
+          <div>
+            <select id="quantityDropdown">
+              <!-- Options will be added dynamically based on the product -->
+            </select>
+          </div>
+            <!-- Options will be added dynamically based on the product -->
+          </select>
+        </div>
+        <button
+        id="confirmOrderButton"
+        class="buttonAccept"
+      >
+        confirm
+      </button>
+        <button id="orderHistoryButton", class="buttonAccept">View Order History</button>
+      </div>
+    </div>
 
-  <div id="queueProgressContainer">
-    <div id="existingOrders" class="progress-segment"></div>
-    <div id="userOrders" class="progress-segment"></div>
-    <div id="queueProgressLabel">0/14</div>
-  </div>
-
-  <div id="productDetails"></div>
-  <select id="quantityDropdown">
-    <!-- Options will be added dynamically based on the product -->
-  </select>
-
-  <button id="confirmOrderButton">Confirm</button>
-</div>
-
-<button id="orderHistoryButton">Order History</button>
-<div id="orderHistoryContainer" style="display: none;"></div>
-
-<script src="popup.js"></script>
-</body>
+    <script src="popup.js"></script>
+  </body>
 </html>

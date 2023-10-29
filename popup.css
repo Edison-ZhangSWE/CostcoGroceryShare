@@ -1,17 +1,38 @@
 body {
-    width: 250px;
-    font-family: Arial, sans-serif;
+    width: 500px;
+    height: auto;
     margin: 0;
-    padding: 10px;
+    font-family: 'Inter';
+    background-color: #CFE1F4;
 }
 
 h2 {
     color: #333;
     margin-top: 0;
+    margin-bottom: 5px;
+}
+
+h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+
+p {
+    margin: 0;
+}
+
+#queueProgressContainer {
+    position: relative;
+    height: 30px;
+    width: 100%;
+    background-color: #6F6F6F; /* This will be the color of the unfilled part of the progress bar */
+    margin-bottom: 10px;
+    border-radius: 0px;
+    border-width: 8px;
 }
 
 button {
-    background-color: #4CAF50;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -23,9 +44,22 @@ button:hover {
     background-color: #45a049;
 }
 
-#queueProgressContainer {
-    margin-bottom: 10px;
+#logoutButton {
+    width: 50%;
+    background-color: #95BBE1;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
 }
+
+#logoutButton:hover {
+    background-color: #1D3557;
+}
+
+
+
 
 #queueProgress {
     width: 100%;
@@ -37,13 +71,19 @@ button:hover {
 }
 
 #productDetails {
-    font-weight: bold;
     margin-bottom: 10px;
+    width: 100%;
+    margin: auto;
+    background-color: #95BBE1;
+    padding: 15px;
+    border-radius: 10px;
 }
 
 #quantityDropdown {
     width: 100%;
+    margin: auto;
     margin-bottom: 10px;
+    background-color: #95BBE1;
 }
 
 /* New styles for dropdown options */
@@ -51,13 +91,6 @@ button:hover {
     background-color: #ffeee6;
 }
 
-#queueProgressContainer {
-    position: relative;
-    height: 20px;
-    width: 100%;
-    background-color: #ddd;
-    margin-bottom: 10px;
-}
 
 .progress-segment {
     position: absolute;
@@ -68,18 +101,97 @@ button:hover {
 
 #existingOrders {
     left: 0;
-    background-color: blue;
+    background-color: #4a7eaa;
+    width: 30%;
+
 }
 
 #userOrders {
-    background-color: orange;
+    width: 30%;
+    background-color: #1D3557;
 }
 
 #queueProgressLabel {
     position: absolute;
     right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    background: white;
-    padding: 0 5px;
+    top: 100%;
+    background: transparent;
+    color: #1D3557;
+    font-weight: bold;
 }
+
+#loginSection {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin: 10%;
+}
+
+input, select, button {
+    margin-bottom: 10px !important;
+    padding: 2% !important;
+}
+
+.contentBox {
+    width: 100%;
+}
+
+.contentBox h1 {
+    font-weight: bold;
+    font-size: 26px;
+    color: #1D3557;
+}
+
+.contentBox h2 {
+    font-weight: bold;
+    font-size: 18px;
+    color: #1D3557;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5%;
+}
+
+.leftBox {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.rightBox {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+.loggedInBox {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+}
+
+.bodyWrap {
+    width: 80%;
+    margin: 10%;
+}
+
+.buttonAccept {
+    border-radius: 30px;
+    background-color: #1D3557 !important;
+    color: white;
+}
+
+#userInfo {
+    text-align: right;
+}
+
+#existingOrders, #userOrders {
+    z-index: 1;
+}
+
+
+

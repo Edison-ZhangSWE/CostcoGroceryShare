@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function validateLogin(email, campus) {
     return (
         email.includes("@") &&
-        ["UC Berkeley", "UC Merced", "UC Davis"].includes(campus)
+        ["UC Berkeley", "UC Merced", "UC Davis", "UC Irvine", "UC Santa Cruz", "UC Santa Barbara", "UCLA", "UC Riverside", "UC San Diego"].includes(campus)
     );
   }
 
@@ -95,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
                   .then((response) => response.json())
                   .then((data) => {
                     currentOrders = data.count;
+                    console.log(`Quantity of packs already ordered for ${details.productName}: ${currentOrders}`);
                     let remainingQuantity = totalOrders - currentOrders;
                     populateDropdown(remainingQuantity, 0, details.productPrice);  // Pass the product price to populateDropdown
                     updateQueueProgress(currentOrders, 0);

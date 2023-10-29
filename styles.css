@@ -1,13 +1,33 @@
-.queue-button {
-    display: block;
-    width: 100%;
-    height: 35px;
-    border: 1px solid rgb(156, 156, 156);
-    background-color: #3071a9;
-    color: #fff;
-    margin-top: 10px;
+.queueProgressContainer {
+    position: relative;
+    height: 20px;
+    width: 150px;
+    background-color: #eee;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.queue-button:hover {
-    background-color: #3071a9;
+.progress-segment {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transition: width 0.3s;
+}
+
+.existingOrders {
+    background-color: #007BFF;
+}
+
+.userOrders {
+    background-color: #FFC107;
+}
+
+.queueProgressLabel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    font-size: 12px;
 }
