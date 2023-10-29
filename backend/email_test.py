@@ -2,7 +2,8 @@ import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-SENDGRID_API_KEY = "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"
+with open('api_key.txt', 'r') as file:
+    SENDGRID_API_KEY = file.readline().strip()
 
 def send_order_emails(item_name, orders):
     # Convert the list of dictionaries into a list of tuples (email, quantity)

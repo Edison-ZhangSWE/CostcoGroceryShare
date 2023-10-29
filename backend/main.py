@@ -90,6 +90,8 @@ def process_order_fulfilled(product_name: str, db: Session):
     db.query(Order).filter(Order.product_name == product_name).delete()
     db.commit()
 
+    send_order_emails(product_name, user_data)
+
 
 def process_user_data(product_name:str, user_data: list):
     # Process the data as required. For now, we're just printing it.
@@ -122,4 +124,3 @@ def get_user_order_progress(user_id: str, db: Session = Depends(get_db)):
     
     return progress_list
 
-    send_order_emails(product_name, user_data)
