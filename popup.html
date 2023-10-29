@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Costco Grocery Share</title>
-    <link rel="stylesheet" type="text/css" href="popup.css">
-</head>
-<body>
+    <link rel="stylesheet" type="text/css" href="popup.css" />
+  </head>
+  <body>
     <h2>Costco Grocery Share</h2>
-    <div id="queueStatus">
-        <!-- Dynamically populated queue status will go here -->
+
+    <div id="queueProgressContainer">
+      <div id="existingOrders" class="progress-segment"></div>
+      <div id="userOrders" class="progress-segment"></div>
+      <div id="queueProgressLabel">0/14</div>
     </div>
-    <button id="addToQueue">Add to Queue</button>
+
+
+
+    <div id="productDetails"></div>
+    <select id="quantityDropdown">
+      <!-- Options will be added dynamically based on the product -->
+    </select>
+    <button id="confirmOrderButton">Confirm</button>
     <script src="popup.js"></script>
-</body>
+  </body>
 </html>
