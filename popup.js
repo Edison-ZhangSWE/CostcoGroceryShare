@@ -70,19 +70,20 @@ function updatePopupForURL(url) {
 
 function setupItemPageView() {
   let productName = document.getElementById("productDetails").innerText; // Fetch product name from DOM
-  let remainingQuantity = totalOrders - currentOrders;
-  populateDropdown(remainingQuantity, 0);
 
   fetch(`http://34.28.211.41:8000/orders/count/?product_name=${encodeURIComponent(productName)}`)
       .then(response => response.json())
       .then(data => {
         currentOrders = data.count;
+        let remainingQuantity = totalOrders - currentOrders;
+        populateDropdown(remainingQuantity, 0);
         updateQueueProgress(currentOrders, 0);
       })
       .catch(error => {
         console.error('Failed to fetch order count:', error);
       });
 }
+
 
 
 function setupGeneralView() {
@@ -106,20 +107,17 @@ function populateDropdown(remainingQuantity, userSelectedQuantity) {
   defaultOption.innerText = "0";
   dropdown.appendChild(defaultOption);
 
-  let maxOptionValue = remainingQuantity + userSelectedQuantity;
-  for (let i = 1; i <= maxOptionValue; i++) {
+  for (let i = 1; i <= remainingQuantity; i++) {
     let option = document.createElement("option");
     option.value = i;
     option.innerText = i;
-
-    if (i > remainingQuantity) {
-      option.classList.add("user-added");
-    }
-
     dropdown.appendChild(option);
   }
   dropdown.value = userSelectedQuantity;
 }
+
+
+
 
 
 let currentOrders = 5;
