@@ -1,5 +1,3 @@
-# main.py
-
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -8,14 +6,22 @@ from pydantic import BaseModel
 from database import SessionLocal, Order
 from database import Product
 from typing import List
+from email_test import send_order_emails
 import re
+from pydantic import BaseModel
+
+class OrderModel(BaseModel):
+    product_name: str
+    user_id: str
+    quantity: int
+    # Add other fields as necessary
 
 app = FastAPI()
 
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["chrome-extension://*"],
+    allow_origins=["chrome-extension://fmbcpnhnpdnphmodanckkahbapcfmihe", "chrome-extension://kkeddicdfacbfadegiljgcnfcgbdcnhn", "chrome-extension://kljeeojepgmfnhmgbjminhcgkhihdchh"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -92,8 +98,7 @@ def process_user_data(product_name:str, user_data: list):
     print(product_name)
 
 
-
-@app.get("/orders/user/{user_id}/", response_model=List[Order])
+@app.get("/orders/user/{user_id}/", response_model=List[OrderModel])
 def get_user_orders(user_id: str, db: Session = Depends(get_db)):
     return db.query(Order).filter(Order.user_id == user_id).all()
 
@@ -117,3 +122,4 @@ def get_user_order_progress(user_id: str, db: Session = Depends(get_db)):
     
     return progress_list
 
+    send_order_emails(product_name, user_data)

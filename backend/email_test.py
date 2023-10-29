@@ -1,8 +1,8 @@
-email_test.py: import os
+import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-SENDGRID_API_KEY = "API_KEY"
+SENDGRID_API_KEY = "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"
 
 def send_order_emails(item_name, orders):
     # Convert the list of dictionaries into a list of tuples (email, quantity)
@@ -29,3 +29,4 @@ def send_order_emails(item_name, orders):
         print(response.status_code, response.body, response.headers)
     except Exception as e:
         print(f"Error sending email: {e}")
+
