@@ -2,7 +2,7 @@ import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-SENDGRID_API_KEY = "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"
+SENDGRID_API_KEY = "API_KEY"
 
 def send_order_emails(item_name, orders):
     # Convert the list of tuples into a formatted string for the email body
