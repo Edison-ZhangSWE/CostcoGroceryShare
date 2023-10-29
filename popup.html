@@ -1,15 +1,44 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Costco Grocery Share</title>
-    <link rel="stylesheet" type="text/css" href="popup.css">
-</head>
-<body>
+    <link rel="stylesheet" type="text/css" href="popup.css" />
+  </head>
+  <body>
     <h2>Costco Grocery Share</h2>
-    <div id="queueStatus">
-        <!-- Dynamically populated queue status will go here -->
+
+    <!-- Login Section -->
+    <div id="loginSection">
+      <input type="email" id="email" placeholder="Email" />
+      <select id="campus">
+        <option value="UC Berkeley">UC Berkeley</option>
+        <option value="UC Merced">UC Merced</option>
+        <option value="UC Davis">UC Davis</option>
+      </select>
+      <button id="loginButton">Login</button>
+      <div id="loginError" style="color: red"></div>
+      <!-- Display login errors here -->
     </div>
-    <button id="addToQueue">Add to Queue</button>
+
+    <!-- Main content (hidden by default) -->
+    <div id="mainContent" style="display: none">
+      <div id="userInfo">
+        <p>Logged in as: <span id="loggedInEmail"></span></p>
+        <p>University: <span id="loggedInUniversity"></span></p>
+      </div>
+      <button id="logoutButton">Logout</button>
+      <div id="queueProgressContainer">
+        <div id="existingOrders" class="progress-segment"></div>
+        <div id="userOrders" class="progress-segment"></div>
+        <div id="queueProgressLabel">0/14</div>
+      </div>
+      <div id="productDetails"></div>
+      <select id="quantityDropdown">
+        <!-- Options will be added dynamically based on the product -->
+      </select>
+      <button id="confirmOrderButton">Confirm</button>
+    </div>
+
     <script src="popup.js"></script>
-</body>
+  </body>
 </html>
