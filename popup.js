@@ -24,11 +24,16 @@ document.addEventListener("DOMContentLoaded", function () {
           let details = results[0].result;
           document.getElementById("productDetails").innerText = details.productName;
 
-          let totalQuantityMatch = details.productName.match(/\d+\s*total\s*packs/i);
+          let regexPattern = /(\d+\s*(total\s*(packs|count))|total\s*\d+\s*packs)/i;
+          let totalQuantityMatch = details.productName.match(regexPattern);
           if (totalQuantityMatch) {
-            totalOrders = parseInt(totalQuantityMatch[0]);
-          } else {
-            totalOrders = 14; // default value if not found
+            let numberMatch = totalQuantityMatch[0].match(/\d+/);
+            if (numberMatch) {
+              totalOrders = parseInt(numberMatch[0]);
+            }
+          }
+          else {
+            totalOrders = 10; // default value if not found
           }
 
           updateQueueProgress(currentOrders, 0);
