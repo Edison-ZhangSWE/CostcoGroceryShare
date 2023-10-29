@@ -7,6 +7,7 @@ from sqlalchemy import func
 from pydantic import BaseModel
 from database import SessionLocal, Order
 from database import Product
+from typing import List
 import re
 
 app = FastAPI()
@@ -89,3 +90,30 @@ def process_user_data(product_name:str, user_data: list):
     print(user_data)
     # Add any additional processing or operations here
     print(product_name)
+
+
+
+@app.get("/orders/user/{user_id}/", response_model=List[Order])
+def get_user_orders(user_id: str, db: Session = Depends(get_db)):
+    return db.query(Order).filter(Order.user_id == user_id).all()
+
+
+@app.get("/orders/user/{user_id}/progress/")
+def get_user_order_progress(user_id: str, db: Session = Depends(get_db)):
+    orders = db.query(Order).filter(Order.user_id == user_id).all()
+    
+    progress_list = []
+    
+    for order in orders:
+        product = db.query(Product).filter(Product.product_name == order.product_name).first()
+        if product:
+            progress = {
+                "product_name": order.product_name,
+                "quantity_ordered": order.quantity,
+                "total_packs": product.total_packs,
+                "progress_percentage": (order.quantity / product.total_packs) * 100
+            }
+            progress_list.append(progress)
+    
+    return progress_list
+

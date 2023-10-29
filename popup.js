@@ -125,8 +125,8 @@ function populateDropdown(remainingQuantity, userSelectedQuantity) {
 
 
 
-let currentOrders = 5;
-let totalOrders = 14;
+let currentOrders = 0;
+let totalOrders = 10;
 
 document.getElementById('confirmOrderButton').addEventListener('click', function () {
   let selectedQuantity = parseInt(document.getElementById('quantityDropdown').value);
