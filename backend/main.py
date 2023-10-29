@@ -3,6 +3,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from pydantic import BaseModel
 from database import SessionLocal, Order
 
@@ -37,4 +38,10 @@ def create_order(order: OrderCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_order)
     return db_order
+
+
+@app.get("/orders/count/")
+def get_order_count(product_name: str, db: Session = Depends(get_db)):
+    count = db.query(func.sum(Order.quantity)).filter(Order.product_name == product_name).scalar() or 0
+    return {"count": count}
 

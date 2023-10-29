@@ -69,9 +69,21 @@ function updatePopupForURL(url) {
 }
 
 function setupItemPageView() {
+  let productName = document.getElementById("productDetails").innerText; // Fetch product name from DOM
   let remainingQuantity = totalOrders - currentOrders;
   populateDropdown(remainingQuantity, 0);
+
+  fetch(`http://34.28.211.41:8000/orders/count/?product_name=${encodeURIComponent(productName)}`)
+      .then(response => response.json())
+      .then(data => {
+        currentOrders = data.count;
+        updateQueueProgress(currentOrders, 0);
+      })
+      .catch(error => {
+        console.error('Failed to fetch order count:', error);
+      });
 }
+
 
 function setupGeneralView() {
   document.getElementById("productDetails").style.display = "none";
