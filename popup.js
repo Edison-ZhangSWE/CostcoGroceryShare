@@ -21,25 +21,27 @@ document.addEventListener("DOMContentLoaded", function () {
         args: []
       }, (results) => {
         if (results && results.length > 0) {
-          let details = results[0].result;
-          document.getElementById("productDetails").innerText = details.productName;
-
-          let regexPattern = /(\d+\s*(total\s*(packs|count))|total\s*\d+\s*packs)/i;
-          let totalQuantityMatch = details.productName.match(regexPattern);
-          if (totalQuantityMatch) {
-            let numberMatch = totalQuantityMatch[0].match(/\d+/);
-            if (numberMatch) {
-              totalOrders = parseInt(numberMatch[0]);
+            let details = results[0].result;
+            document.getElementById("productDetails").innerText = details.productName;
+    
+            let regexPattern = /(\d+)\s*total\s*(packs|count)/i;
+            let totalQuantityMatch = details.productName.match(regexPattern);
+            if (totalQuantityMatch) {
+                let numberMatch = totalQuantityMatch[0].match(/\d+/);
+                if (numberMatch) {
+                    totalOrders = parseInt(numberMatch[0]);
+                }
+            } else {
+                totalOrders = 10; // default value if not found
             }
-          }
-          else {
-            totalOrders = 10; // default value if not found
-          }
-
-          updateQueueProgress(currentOrders, 0);
-          updatePopupForURL(currentURL);
+    
+            updateQueueProgress(currentOrders, 0);
+            populateDropdown(details.productPrice, totalOrders, 0);
+            updatePopupForURL(currentURL);
         }
-      });
+    });
+    
+
     } else {
       updatePopupForURL(currentURL);
     }
@@ -99,30 +101,26 @@ function setupGeneralView() {
 
 function getProductDetails() {
   let productName = document.querySelector('h1').innerText;
-  return { productName: productName };
+  let productPriceText = document.querySelector('#pull-right-price .value').innerText;
+  let productPrice = parseFloat(productPriceText);
+  return { productName: productName, productPrice: productPrice };
 }
 
-function populateDropdown(remainingQuantity, userSelectedQuantity) {
+
+function populateDropdown(productPrice, totalPacks, userSelectedQuantity) {
   let dropdown = document.getElementById("quantityDropdown");
   dropdown.innerHTML = '';
 
-  // Add a default option of "0"
-  let defaultOption = document.createElement("option");
-  defaultOption.value = 0;
-  defaultOption.innerText = "0";
-  dropdown.appendChild(defaultOption);
+  let pricePerPack = productPrice / totalPacks;
 
-  for (let i = 1; i <= remainingQuantity; i++) {
-    let option = document.createElement("option");
-    option.value = i;
-    option.innerText = i;
-    dropdown.appendChild(option);
+  for (let i = 1; i <= totalPacks; i++) {
+      let option = document.createElement("option");
+      option.value = i;
+      option.innerText = `${i}: $${(i * pricePerPack).toFixed(2)}`;
+      dropdown.appendChild(option);
   }
   dropdown.value = userSelectedQuantity;
 }
-
-
-
 
 
 let currentOrders = 0;
