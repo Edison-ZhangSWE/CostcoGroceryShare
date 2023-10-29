@@ -121,7 +121,7 @@ document.getElementById('confirmOrderButton').addEventListener('click', function
   populateDropdown(remainingQuantity, 0);
   let productName = document.getElementById("productDetails").innerText;
 
-  fetch('http://IP_ADDRESS:8000/order', {
+  fetch('http://34.28.211.41:8000/orders/', { // Note the trailing slash
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -129,6 +129,7 @@ document.getElementById('confirmOrderButton').addEventListener('click', function
     body: JSON.stringify({
       product_name: productName,
       quantity: selectedQuantity,
+      user_id: "dummy_user_id" // placeholder until you have a proper user system
     }),
   })
       .then(response => response.json())
@@ -139,6 +140,7 @@ document.getElementById('confirmOrderButton').addEventListener('click', function
         console.error('Error:', error);
       });
 });
+
 document.getElementById('quantityDropdown').addEventListener('change', function () {
   let selectedQuantity = parseInt(document.getElementById('quantityDropdown').value);
   updateQueueProgress(currentOrders, selectedQuantity);
