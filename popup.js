@@ -20,13 +20,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
   chrome.storage.local.get(["loggedIn", "email", "campus"], function (data) {
     if (data.loggedIn) {
-      // If user is already logged in, display the email and campus, hide login section, and show main content
       loggedInEmailElement.textContent = data.email;
       loggedInUniversityElement.textContent = data.campus;
       loginSection.style.display = "none";
       mainContent.style.display = "block";
+
+      userId = data.email;  // Store the email in userId
     }
+    setupItemPageView();
+    handleProductDetails();
   });
+
+
+
 
   // Login button event listener
   loginButton.addEventListener("click", function () {
@@ -73,27 +79,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (currentURL.includes('costco.com') && currentURL.includes('.product.')) {
       chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id },
-        function: getProductDetails,
-        args: []
-      }, (results) => {
-        if (results && results.length > 0) {
-          let details = results[0].result;
-          document.getElementById("productDetails").innerText = details.productName;
+            target: { tabId: tabs[0].id },
+            function: getProductDetails,
+            args: [],
+          },
+          (results) => {
+            if (results && results.length > 0) {
+              let details = results[0].result;
+              document.getElementById("productDetails").innerText = details.productName;
 
-          let regexPattern = /(\d+\s*(total\s*(packs|count))|total\s*\d+\s*packs)/i;
-          let totalQuantityMatch = details.productName.match(regexPattern);
-          if (totalQuantityMatch) {
-            let numberMatch = totalQuantityMatch[0].match(/\d+/);
-            if (numberMatch) {
-              totalOrders = parseInt(numberMatch[0]);
+              let regexPattern = /(\d+\s*(total\s*(packs|count))|total\s*\d+\s*packs)/i;
+              let totalQuantityMatch = details.productName.match(regexPattern);
+              if (totalQuantityMatch) {
+                let numberMatch = totalQuantityMatch[0].match(/\d+/);
+                if (numberMatch) {
+                  totalOrders = parseInt(numberMatch[0]);
+                }
+              } else {
+                totalOrders = 10; // default value if not found
+              }
+              setupItemPageView();  // Call this here after setting totalOrders
             }
-          }
-          else {
-            totalOrders = 10; // default value if not found
-          }
-        }
-      );
+          });
+
+
+
     } else {
       updatePopupForURL(currentURL);
     }
@@ -133,6 +143,32 @@ function updatePopupForURL(url) {
     setupGeneralView();
   }
 }
+
+function handleProductDetails() {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    currentURL = tabs[0].url;
+
+    if (currentURL.includes('costco.com') && currentURL.includes('.product.')) {
+      // ... (rest of the product details logic)
+    } else {
+      updatePopupForURL(currentURL);
+    }
+  });
+}
+
+
+function checkProductDetails() {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    currentURL = tabs[0].url;
+
+    if (currentURL.includes('costco.com') && currentURL.includes('.product.')) {
+      // ... (rest of the product details logic)
+    } else {
+      updatePopupForURL(currentURL);
+    }
+  });
+}
+
 
 function setupItemPageView() {
   let productName = document.getElementById("productDetails").innerText; // Fetch product name from DOM
@@ -186,7 +222,6 @@ function populateDropdown(remainingQuantity, userSelectedQuantity) {
 
 
 function fetchOrderHistory() {
-  let userId = "j.beck.msic@gmail.com"; // You'll eventually want to replace this with a dynamic value
 
   fetch(`http://34.28.211.41:8000/orders/user/${encodeURIComponent(userId)}/`)
       .then(response => response.json())
@@ -214,8 +249,15 @@ function displayOrderHistory(orders) {
 
 let currentOrders = 0;
 let totalOrders = 10;
+let userId;  // Declare at the top level of your script
+
 
 document.getElementById('confirmOrderButton').addEventListener('click', function () {
+  if (!userId) {
+    console.error("User email is not defined.");
+    // Handle the error, e.g., by showing a message to the user
+    return;
+  }
   let selectedQuantity = parseInt(document.getElementById('quantityDropdown').value);
   currentOrders += selectedQuantity;
   updateQueueProgress(currentOrders, totalOrders);
@@ -231,7 +273,7 @@ document.getElementById('confirmOrderButton').addEventListener('click', function
     body: JSON.stringify({
       product_name: productName,
       quantity: selectedQuantity,
-      user_id: "j.beck.msic@gmail.com" // placeholder until you have a proper user system
+      user_id: userId
     }),
   })
       .then(response => response.json())
