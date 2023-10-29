@@ -121,7 +121,7 @@ document.getElementById('confirmOrderButton').addEventListener('click', function
   populateDropdown(remainingQuantity, 0);
   let productName = document.getElementById("productDetails").innerText;
 
-  fetch('http://localhost:8000/order', {
+  fetch('http://IP_ADDRESS:8000/order', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
