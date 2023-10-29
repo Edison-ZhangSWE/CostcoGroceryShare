@@ -24,12 +24,10 @@ document.addEventListener("DOMContentLoaded", function () {
       loggedInUniversityElement.textContent = data.campus;
       loginSection.style.display = "none";
       mainContent.style.display = "block";
-      userId = data.email;
+      userId = data.email; // Make sure this line is executed
     }
     handleProductDetails();
   });
-
-
 
 
 
@@ -44,20 +42,27 @@ document.addEventListener("DOMContentLoaded", function () {
         loggedIn: true,
         email: email,
         campus: campus,
+      }, async function() {
+        // Set userId here
+        userId = email;
+
+        // Display the email and campus in the popup
+        loggedInEmailElement.textContent = email;
+        loggedInUniversityElement.textContent = campus;
+
+        // Hide the login section and show the main content
+        loginSection.style.display = "none";
+        mainContent.style.display = "block";
+
+        // Update the existingOrders bar after login (or any other post-login operations)
+        await updateExistingOrdersBar();
       });
-
-      // Display the email and campus in the popup
-      loggedInEmailElement.textContent = email;
-      loggedInUniversityElement.textContent = campus;
-
-      // Hide the login section and show the main content
-      loginSection.style.display = "none";
-      mainContent.style.display = "block";
     } else {
       // If login fails, display an error message
       loginError.textContent = "Invalid email or campus selection!";
     }
   });
+
 
   const logoutButton = document.getElementById("logoutButton");
 
@@ -118,6 +123,14 @@ document.addEventListener("DOMContentLoaded", function () {
 document.getElementById('orderHistoryButton').addEventListener('click', function() {
   fetchOrderHistory();
 });
+
+
+async function updateExistingOrdersBar() {
+  const productName = document.getElementById("productDetails").innerText;
+  const orderData = await fetchOrderData(productName);
+  currentOrders = orderData.count;
+  updateQueueProgress(currentOrders, 0);
+}
 
 
 function addItemToQueue(item, imageUrl) {
