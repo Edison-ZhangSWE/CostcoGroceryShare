@@ -18,6 +18,16 @@ class Order(Base):
     user_id = Column(String)
     quantity = Column(Integer)
 
+
+class Product(Base):
+    __tablename__ = "products"
+
+    id = Column(Integer, primary_key=True, index=True)
+    product_name = Column(String, index=True, unique=True)
+    total_packs = Column(Integer)
+
+
+
 # Create the database tables
 Base.metadata.create_all(bind=engine)
 
