@@ -46,6 +46,11 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+document.getElementById('orderHistoryButton').addEventListener('click', function() {
+  fetchOrderHistory();
+});
+
+
 function addItemToQueue(item, imageUrl) {
   let itemElement = document.createElement("div");
   itemElement.innerText = item.name;
@@ -121,6 +126,29 @@ function populateDropdown(remainingQuantity, userSelectedQuantity) {
   dropdown.value = userSelectedQuantity;
 }
 
+function fetchOrderHistory() {
+  let userId = "j.beck.msic@gmail.com"; // You'll eventually want to replace this with a dynamic value
+
+  fetch(`http://34.28.211.41:8000/orders/user/${encodeURIComponent(userId)}/`)
+      .then(response => response.json())
+      .then(orders => {
+        displayOrderHistory(orders);
+      })
+      .catch(error => {
+        console.error('Failed to fetch order history:', error);
+      });
+}
+
+function displayOrderHistory(orders) {
+  let container = document.getElementById("orderHistoryContainer");
+  container.innerHTML = ''; // Clear any existing content
+  orders.forEach(order => {
+    let orderDiv = document.createElement('div');
+    orderDiv.innerHTML = `Product: ${order.product_name}, Quantity: ${order.quantity}`;
+    container.appendChild(orderDiv);
+  });
+  container.style.display = "block"; // Show the container
+}
 
 
 
