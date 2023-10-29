@@ -119,8 +119,26 @@ document.getElementById('confirmOrderButton').addEventListener('click', function
   updateQueueProgress(currentOrders, totalOrders);
   let remainingQuantity = totalOrders - currentOrders;
   populateDropdown(remainingQuantity, 0);
-});
+  let productName = document.getElementById("productDetails").innerText;
 
+  fetch('http://localhost:8000/order', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      product_name: productName,
+      quantity: selectedQuantity,
+    }),
+  })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Order stored:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+});
 document.getElementById('quantityDropdown').addEventListener('change', function () {
   let selectedQuantity = parseInt(document.getElementById('quantityDropdown').value);
   updateQueueProgress(currentOrders, selectedQuantity);
