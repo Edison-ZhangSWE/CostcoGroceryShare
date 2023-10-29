@@ -88,19 +88,24 @@ document.addEventListener("DOMContentLoaded", function () {
               let details = results[0].result;
               document.getElementById("productDetails").innerText = details.productName;
 
-              let regexPattern = /(\d+\s*(total\s*(packs|count))|total\s*\d+\s*packs)/i;
-              let totalQuantityMatch = details.productName.match(regexPattern);
-              if (totalQuantityMatch) {
-                let numberMatch = totalQuantityMatch[0].match(/\d+/);
-                if (numberMatch) {
-                  totalOrders = parseInt(numberMatch[0]);
-                }
-              } else {
-                totalOrders = 10; // default value if not found
-              }
-              setupItemPageView();  // Call this here after setting totalOrders
+              fetch(
+                  `http://34.28.211.41:8000/orders/count/?product_name=${encodeURIComponent(
+                      details.productName
+                  )}`
+              )
+                  .then((response) => response.json())
+                  .then((data) => {
+                    currentOrders = data.count;
+                    let remainingQuantity = totalOrders - currentOrders;
+                    populateDropdown(remainingQuantity, 0, details.productPrice);  // Pass the product price to populateDropdown
+                    updateQueueProgress(currentOrders, 0);
+                  })
+                  .catch((error) => {
+                    console.error("Failed to fetch order count:", error);
+                  });
             }
           });
+
 
 
 
@@ -170,25 +175,42 @@ function checkProductDetails() {
 }
 
 
+let ongoingFetch = null;
+let fetchInProgress = false;
+
 function setupItemPageView() {
+  if (fetchInProgress) return;  // If a fetch is in progress, exit
+
+  fetchInProgress = true;  // Set the mutex
+  currentOrders = 0;  // Reset the global state
+
   let productName = document.getElementById("productDetails").innerText; // Fetch product name from DOM
 
-  fetch(
-    `http://34.28.211.41:8000/orders/count/?product_name=${encodeURIComponent(
-      productName
-    )}`
-  )
-    .then((response) => response.json())
-    .then((data) => {
-      currentOrders = data.count;
-      let remainingQuantity = totalOrders - currentOrders;
-      populateDropdown(remainingQuantity, 0);
-      updateQueueProgress(currentOrders, 0);
-    })
-    .catch((error) => {
-      console.error("Failed to fetch order count:", error);
-    });
+  if (!ongoingFetch) {
+    ongoingFetch = fetch(`http://34.28.211.41:8000/orders/count/?product_name=${encodeURIComponent(productName)}`)
+        .then((response) => response.json())
+        .finally(() => {
+          ongoingFetch = null;  // Reset the ongoingFetch after completion
+        });
+  }
+
+  ongoingFetch
+      .then((data) => {
+        let localCurrentOrders = data.count;  // Use a local variable
+        let remainingQuantity = totalOrders - localCurrentOrders;
+        populateDropdown(remainingQuantity, 0);
+        updateQueueProgress(localCurrentOrders, 0);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch order count:", error);
+      })
+      .finally(() => {
+        fetchInProgress = false;  // Release the mutex
+      });
 }
+
+
+
 
 function setupGeneralView() {
   document.getElementById("productDetails").style.display = "none";
@@ -198,12 +220,22 @@ function setupGeneralView() {
 
 function getProductDetails() {
   let productName = document.querySelector("h1").innerText;
-  return { productName: productName };
+  let productPrice = document.querySelector('span[automation-id="productPriceOutput"]').innerText;
+  return { productName: productName, productPrice: productPrice };
 }
 
-function populateDropdown(remainingQuantity, userSelectedQuantity) {
+
+function populateDropdown(remainingQuantity, userSelectedQuantity, productPrice) {
+  console.log("Received productPrice:", productPrice);
   let dropdown = document.getElementById("quantityDropdown");
   dropdown.innerHTML = "";
+
+  // Convert the product price string to a number (assuming the price string looks like "$200")
+  let pricePerItem = 0;
+  if (productPrice && typeof productPrice === 'string') {
+    pricePerItem = parseFloat(productPrice.replace(/[^0-9.-]+/g, "")) / totalOrders;
+  }
+
 
   // Add a default option of "0"
   let defaultOption = document.createElement("option");
@@ -214,11 +246,12 @@ function populateDropdown(remainingQuantity, userSelectedQuantity) {
   for (let i = 1; i <= remainingQuantity; i++) {
     let option = document.createElement("option");
     option.value = i;
-    option.innerText = i;
+    option.innerText = `${i} - $${(pricePerItem * i).toFixed(2)}`;  // Display quantity and its corresponding price
     dropdown.appendChild(option);
   }
   dropdown.value = userSelectedQuantity;
 }
+
 
 
 function fetchOrderHistory() {
@@ -243,6 +276,8 @@ function displayOrderHistory(orders) {
   });
   container.style.display = "block"; // Show the container
 }
+
+
 
 
 
