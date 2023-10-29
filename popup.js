@@ -8,13 +8,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const mainContent = document.getElementById("mainContent");
   const loggedInEmailElement = document.getElementById("loggedInEmail");
   const loggedInUniversityElement =
-    document.getElementById("loggedInUniversity");
+      document.getElementById("loggedInUniversity");
 
   // Mock validation (for this example)
   function validateLogin(email, campus) {
     return (
-      email.includes("@") &&
-      ["UC Berkeley", "UC Merced", "UC Davis"].includes(campus)
+        email.includes("@") &&
+        ["UC Berkeley", "UC Merced", "UC Davis"].includes(campus)
     );
   }
 
@@ -24,12 +24,11 @@ document.addEventListener("DOMContentLoaded", function () {
       loggedInUniversityElement.textContent = data.campus;
       loginSection.style.display = "none";
       mainContent.style.display = "block";
-
-      userId = data.email;  // Store the email in userId
+      userId = data.email;
     }
-    setupItemPageView();
     handleProductDetails();
   });
+
 
 
 
@@ -128,7 +127,7 @@ function addItemToQueue(item, imageUrl) {
 
 function updateQueueProgress(currentOrders, userSelectedQuantity) {
   let totalWidth = document.getElementById(
-    "queueProgressContainer"
+      "queueProgressContainer"
   ).offsetWidth;
   let existingWidth = (currentOrders / totalOrders) * totalWidth;
   let userWidth = (userSelectedQuantity / totalOrders) * totalWidth;
@@ -149,17 +148,42 @@ function updatePopupForURL(url) {
   }
 }
 
-function handleProductDetails() {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    currentURL = tabs[0].url;
+async function handleProductDetails() {
+  try {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const currentURL = tabs[0].url;
 
     if (currentURL.includes('costco.com') && currentURL.includes('.product.')) {
-      // ... (rest of the product details logic)
+      // Gather product details and set up the item page view
+      const details = await getProductDetailsFromTab(tabs[0].id);
+      document.getElementById("productDetails").innerText = details.productName;
+      totalOrders = details.packCount;  // Update totalOrders with the pack count
+
+
+      const data = await fetchOrderData(details.productName);
+      const remainingQuantity = totalOrders - data.count;
+      populateDropdown(remainingQuantity, 0, details.productPrice);
+      updateQueueProgress(data.count, 0);
     } else {
       updatePopupForURL(currentURL);
     }
-  });
+  } catch (error) {
+    console.error("Error handling product details:", error);
+  }
 }
+
+async function getProductDetailsFromTab(tabId) {
+  const results = await chrome.scripting.executeScript({
+    target: { tabId: tabId },
+    function: getProductDetails,
+    args: []
+  });
+  if (results && results.length > 0) {
+    return results[0].result;
+  }
+  throw new Error("Failed to get product details from tab");
+}
+
 
 
 function checkProductDetails() {
@@ -178,38 +202,37 @@ function checkProductDetails() {
 let ongoingFetch = null;
 let fetchInProgress = false;
 
-function setupItemPageView() {
-  if (fetchInProgress) return;  // If a fetch is in progress, exit
+async function setupItemPageView() {
+  try {
+    const productName = document.getElementById("productDetails").innerText;
+    const orderData = await fetchOrderData(productName);
+    const remainingQuantity = totalOrders - orderData.count;
 
-  fetchInProgress = true;  // Set the mutex
-  currentOrders = 0;  // Reset the global state
+    populateDropdown(remainingQuantity, 0, orderData.productPrice);
+    updateQueueProgress(orderData.count, 0);
 
-  let productName = document.getElementById("productDetails").innerText; // Fetch product name from DOM
-
-  if (!ongoingFetch) {
-    ongoingFetch = fetch(`http://34.28.211.41:8000/orders/count/?product_name=${encodeURIComponent(productName)}`)
-        .then((response) => response.json())
-        .finally(() => {
-          ongoingFetch = null;  // Reset the ongoingFetch after completion
-        });
+  } catch (error) {
+    console.error("Error setting up item page view:", error);
+    // You can display some user-friendly error message here.
   }
+}
 
-  ongoingFetch
-      .then((data) => {
-        let localCurrentOrders = data.count;  // Use a local variable
-        let remainingQuantity = totalOrders - localCurrentOrders;
-        populateDropdown(remainingQuantity, 0);
-        updateQueueProgress(localCurrentOrders, 0);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch order count:", error);
-      })
-      .finally(() => {
-        fetchInProgress = false;  // Release the mutex
-      });
+async function fetchOrderData(productName) {
+  const orderCountResponse = await fetch(`http://34.28.211.41:8000/orders/count/?product_name=${encodeURIComponent(productName)}`);
+  const orderData = await orderCountResponse.json();
+  return orderData;
 }
 
 
+async function initializeExtension() {
+  try {
+    await handleProductDetails();  // Handles product details fetching and UI setup
+  } catch (error) {
+    console.error("Error initializing extension:", error);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", initializeExtension);
 
 
 function setupGeneralView() {
@@ -221,8 +244,15 @@ function setupGeneralView() {
 function getProductDetails() {
   let productName = document.querySelector("h1").innerText;
   let productPrice = document.querySelector('span[automation-id="productPriceOutput"]').innerText;
-  return { productName: productName, productPrice: productPrice };
+
+  // Extract pack count from productName
+  let regexPattern = /(\d+\s*(total\s*(packs|count))|total\s*\d+\s*packs)/i;
+  let totalQuantityMatch = productName.match(regexPattern);
+  let packCount = totalQuantityMatch ? parseInt(totalQuantityMatch[1]) : 1; // Default to 1 if not found
+
+  return { productName: productName, productPrice: productPrice, packCount: packCount };
 }
+
 
 
 function populateDropdown(remainingQuantity, userSelectedQuantity, productPrice) {
@@ -318,16 +348,16 @@ document.getElementById('confirmOrderButton').addEventListener('click', function
       .catch((error) => {
         console.error("Error:", error);
       });
-  });
+});
 
 document
-  .getElementById("quantityDropdown")
-  .addEventListener("change", function () {
-    let selectedQuantity = parseInt(
-      document.getElementById("quantityDropdown").value
-    );
-    updateQueueProgress(currentOrders, selectedQuantity);
-  });
+    .getElementById("quantityDropdown")
+    .addEventListener("change", function () {
+      let selectedQuantity = parseInt(
+          document.getElementById("quantityDropdown").value
+      );
+      updateQueueProgress(currentOrders, selectedQuantity);
+    });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "addItem") {
