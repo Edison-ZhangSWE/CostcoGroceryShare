@@ -72,14 +72,20 @@ def get_order_count(product_name: str, db: Session = Depends(get_db)):
 
 def process_order_fulfilled(product_name: str, db: Session):
     orders = db.query(Order).filter(Order.product_name == product_name).all()
-    
+
     # Gather all relevant user IDs and their respective ordered quantities
     user_data = [{"user_id": order.user_id, "quantity": order.quantity} for order in orders]
-    
-    # Process the data as required. For now, we're just printing it.
-    print(user_data)
+
+    # Pass the data to your new function
+    process_user_data(product_name, user_data)
 
     # Cleanup: Delete all relevant entries from the order table
     db.query(Order).filter(Order.product_name == product_name).delete()
     db.commit()
 
+
+def process_user_data(product_name:str, user_data: list):
+    # Process the data as required. For now, we're just printing it.
+    print(user_data)
+    # Add any additional processing or operations here
+    print(product_name)
