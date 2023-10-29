@@ -144,7 +144,7 @@ document.getElementById('confirmOrderButton').addEventListener('click', function
     body: JSON.stringify({
       product_name: productName,
       quantity: selectedQuantity,
-      user_id: "dummy_user_id" // placeholder until you have a proper user system
+      user_id: "j.beck.msic@gmail.com" // placeholder until you have a proper user system
     }),
   })
       .then(response => response.json())
